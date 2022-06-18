@@ -23,6 +23,38 @@ function getSelection(e){
     playRound(playerSelection, computerSelection);
 }
 
+function updateScore(){
+    const playerScoreDiv = document.querySelector("#playerScore");
+    let text = playerScoreDiv.textContent;
+    text = text.substring(0, text.length-1) + playerScore;
+    playerScoreDiv.textContent = text;
+
+    const computerScoreDiv = document.querySelector("#computerScore");
+    text = computerScoreDiv.textContent;
+    text = text.substring(0, text.length-1) + computerScore;
+    computerScoreDiv.textContent = text;
+}
+
+function resetGame(){
+    playerScore = 0;
+    computerScore = 0;
+
+    buttons.forEach( button => {
+        button.addEventListener("click", getSelection);
+        button.classList.add("inplay");
+    });
+
+    document.querySelector("#reset").remove();
+
+    let h3 = document.querySelector("h3");
+    h3.innerText = "First to 5 wins";
+    h3.classList.remove("end");
+
+    document.querySelector("#result").innerText = "";
+
+    updateScore();
+}
+
 function playRound(playerSelection, computerSelection) {
 
     playerSelection = playerSelection.toLowerCase();
@@ -66,34 +98,34 @@ function playRound(playerSelection, computerSelection) {
 
     if (playerWon) {
         playerScore++;
-        const playerScoreDiv = document.querySelector("#playerScore");
-        let text = playerScoreDiv.textContent;
-        text = text.substring(0, text.length-1) + playerScore;
-        playerScoreDiv.textContent = text;
     }
     else if (computerWon) {
         computerScore++;
-        const computerScoreDiv = document.querySelector("#computerScore");
-        let text = computerScoreDiv.textContent;
-        text = text.substring(0, text.length-1) + computerScore;
-        computerScoreDiv.textContent = text;
     }
+    updateScore();
 
     if (playerScore >= 5){
         const header = document.querySelector("h3");
         header.textContent = "You win!";
+        header.classList.add("end");
         gameOver = true;
     }
     else if (computerScore >= 5){
         const header = document.querySelector("h3");
         header.textContent = "Computer wins!";
+        header.classList.add("end");
         gameOver = true;
     }
 
     if (gameOver){
-        buttons.forEach(button => button.removeEventListener("click", getSelection));
+        buttons.forEach(button => {
+            button.removeEventListener("click", getSelection);
+            button.classList.remove("inplay");
+        });
+        const reset = document.createElement("button");
+        reset.id = "reset";
+        reset.innerText = "RESET";
+        document.querySelector("body").appendChild(reset);
+        reset.addEventListener('click', resetGame);
     }
 }
-
-
-
